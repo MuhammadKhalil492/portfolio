@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Project {
+  id           String   @id @default(cuid())
+  title        String
+  subtitle     String
+  description  String
+  features     String // JSON array stored as string
+  tech         String // JSON array stored as string
+  liveUrl      String   @default("")
+  githubUrl    String   @default("")
+  image        String   @default("")
+  displayOrder Int      @default(0)
+  visible      Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Experience {
+  id           String   @id @default(cuid())
+  role         String
+  company      String
+  location     String
+  period       String
+  description  String
+  highlights   String // JSON array stored as string
+  displayOrder Int      @default(0)
+  visible      Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model SkillCategory {
+  id           String   @id @default(cuid())
+  category     String
+  skills       String // JSON array stored as string
+  displayOrder Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model SiteSettings {
+  id            String   @id @default("default")
+  logo          String   @default("/images/logo.png")
+  siteName      String   @default("Khalil.")
+  footerText    String   @default("Muhammad Khalil Safi. All rights reserved.")
+  footerSubtext String   @default("Built with Next.js & Tailwind CSS")
+  heroName      String   @default("Muhammad Khalil Safi")
+  heroGreeting  String   @default("Hello, I'm")
+  heroTagline   String   @default("Building scalable web applications and complex marketplaces")
+  heroRoles     String   @default("[\"Full Stack Developer\",\"React Developer\",\"Laravel Expert\",\"API Architect\"]")
+  aboutBio      String   @default("[]")
+  email         String   @default("mkhalilmuhuram29@gmail.com")
+  phone         String   @default("+92 309 8788494")
+  location      String   @default("Lahore, Pakistan")
+  linkedin      String   @default("https://linkedin.com/in/khalil-developer")
+  github        String   @default("https://github.com/MuhammadKhalil492")
+  resumeUrl     String   @default("/resume/khalil-safi-resume.pdf")
+  updatedAt     DateTime @updatedAt
+}

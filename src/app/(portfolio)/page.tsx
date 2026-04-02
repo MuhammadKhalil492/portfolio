@@ -17,18 +17,26 @@ import { personalInfo } from "@/data/personal";
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const [dbProjects, dbExperiences, dbSkills, settings] = await Promise.all([
-    prisma.project.findMany({
-      where: { visible: true },
-      orderBy: { displayOrder: "asc" },
-    }),
-    prisma.experience.findMany({
-      where: { visible: true },
-      orderBy: { displayOrder: "asc" },
-    }),
-    prisma.skillCategory.findMany({ orderBy: { displayOrder: "asc" } }),
-    getSettings(),
-  ]);
+  let dbProjects: Awaited<ReturnType<typeof prisma.project.findMany>> = [];
+  let dbExperiences: Awaited<ReturnType<typeof prisma.experience.findMany>> = [];
+  let dbSkills: Awaited<ReturnType<typeof prisma.skillCategory.findMany>> = [];
+  let settings = await getSettings();
+
+  try {
+    [dbProjects, dbExperiences, dbSkills] = await Promise.all([
+      prisma.project.findMany({
+        where: { visible: true },
+        orderBy: { displayOrder: "asc" },
+      }),
+      prisma.experience.findMany({
+        where: { visible: true },
+        orderBy: { displayOrder: "asc" },
+      }),
+      prisma.skillCategory.findMany({ orderBy: { displayOrder: "asc" } }),
+    ]);
+  } catch {
+    // Database unavailable — fall through to static data fallbacks
+  }
 
   const projects =
     dbProjects.length > 0

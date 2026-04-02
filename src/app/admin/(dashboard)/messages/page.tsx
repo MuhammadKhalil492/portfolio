@@ -4,9 +4,14 @@ import { MessageActions } from "@/components/admin/MessageActions";
 export const dynamic = "force-dynamic";
 
 export default async function AdminMessages() {
-  const messages = await prisma.contactMessage.findMany({
-    orderBy: { createdAt: "desc" },
-  });
+  let messages: Awaited<ReturnType<typeof prisma.contactMessage.findMany>> = [];
+  try {
+    messages = await prisma.contactMessage.findMany({
+      orderBy: { createdAt: "desc" },
+    });
+  } catch {
+    // DB unavailable
+  }
 
   return (
     <div>

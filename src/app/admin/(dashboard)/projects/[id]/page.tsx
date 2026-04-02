@@ -10,7 +10,12 @@ export default async function EditProject({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const project = await prisma.project.findUnique({ where: { id } });
+  let project;
+  try {
+    project = await prisma.project.findUnique({ where: { id } });
+  } catch {
+    notFound();
+  }
 
   if (!project) notFound();
 

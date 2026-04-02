@@ -5,19 +5,30 @@ import { prisma } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboard() {
-  const [projectCount, experienceCount, skillCount, messageCount, unreadCount] =
-    await Promise.all([
-      prisma.project.count(),
-      prisma.experience.count(),
-      prisma.skillCategory.count(),
-      prisma.contactMessage.count(),
-      prisma.contactMessage.count({ where: { read: false } }),
-    ]);
+  let projectCount = 0;
+  let experienceCount = 0;
+  let skillCount = 0;
+  let messageCount = 0;
+  let unreadCount = 0;
+  let recentMessages: Awaited<ReturnType<typeof prisma.contactMessage.findMany>> = [];
 
-  const recentMessages = await prisma.contactMessage.findMany({
-    orderBy: { createdAt: "desc" },
-    take: 5,
-  });
+  try {
+    [projectCount, experienceCount, skillCount, messageCount, unreadCount] =
+      await Promise.all([
+        prisma.project.count(),
+        prisma.experience.count(),
+        prisma.skillCategory.count(),
+        prisma.contactMessage.count(),
+        prisma.contactMessage.count({ where: { read: false } }),
+      ]);
+
+    recentMessages = await prisma.contactMessage.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 5,
+    });
+  } catch {
+    // DB unavailable — show empty dashboard
+  }
 
   const stats = [
     { label: "Projects", count: projectCount, href: "/admin/projects", icon: FolderKanban, color: "text-blue-400" },

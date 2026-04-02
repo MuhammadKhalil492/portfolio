@@ -7,9 +7,14 @@ import { deleteProject } from "@/actions/projects";
 export const dynamic = "force-dynamic";
 
 export default async function AdminProjects() {
-  const projects = await prisma.project.findMany({
-    orderBy: { displayOrder: "asc" },
-  });
+  let projects: Awaited<ReturnType<typeof prisma.project.findMany>> = [];
+  try {
+    projects = await prisma.project.findMany({
+      orderBy: { displayOrder: "asc" },
+    });
+  } catch {
+    // DB unavailable
+  }
 
   return (
     <div>

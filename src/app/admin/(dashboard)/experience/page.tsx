@@ -7,9 +7,14 @@ import { deleteExperience } from "@/actions/experience";
 export const dynamic = "force-dynamic";
 
 export default async function AdminExperience() {
-  const experiences = await prisma.experience.findMany({
-    orderBy: { displayOrder: "asc" },
-  });
+  let experiences: Awaited<ReturnType<typeof prisma.experience.findMany>> = [];
+  try {
+    experiences = await prisma.experience.findMany({
+      orderBy: { displayOrder: "asc" },
+    });
+  } catch {
+    // DB unavailable
+  }
 
   return (
     <div>

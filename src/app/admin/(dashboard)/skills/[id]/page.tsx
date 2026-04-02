@@ -10,7 +10,12 @@ export default async function EditSkillCategory({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const category = await prisma.skillCategory.findUnique({ where: { id } });
+  let category;
+  try {
+    category = await prisma.skillCategory.findUnique({ where: { id } });
+  } catch {
+    notFound();
+  }
 
   if (!category) notFound();
 

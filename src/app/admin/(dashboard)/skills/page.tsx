@@ -7,9 +7,14 @@ import { deleteSkillCategory } from "@/actions/skills";
 export const dynamic = "force-dynamic";
 
 export default async function AdminSkills() {
-  const categories = await prisma.skillCategory.findMany({
-    orderBy: { displayOrder: "asc" },
-  });
+  let categories: Awaited<ReturnType<typeof prisma.skillCategory.findMany>> = [];
+  try {
+    categories = await prisma.skillCategory.findMany({
+      orderBy: { displayOrder: "asc" },
+    });
+  } catch {
+    // DB unavailable
+  }
 
   return (
     <div>

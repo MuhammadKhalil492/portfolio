@@ -10,7 +10,12 @@ export default async function EditExperience({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const experience = await prisma.experience.findUnique({ where: { id } });
+  let experience;
+  try {
+    experience = await prisma.experience.findUnique({ where: { id } });
+  } catch {
+    notFound();
+  }
 
   if (!experience) notFound();
 
